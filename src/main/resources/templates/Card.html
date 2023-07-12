@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        .card {
+            margin-bottom: 10px;
+        }
+
+        .pagination {
+            margin-top: 20px;
+        }
+
+        .pagination .page-item .page-link {
+            color: #000;
+            background-color: #f2f2f2;
+            border: 1px solid #ddd;
+            cursor: pointer;
+        }
+
+        .pagination .page-item.active .page-link {
+            background-color: #4CAF50;
+            color: white;
+            border: 1px solid #4CAF50;
+        }
+    </style>
+</head>
+<body>
+<div class="container">
+    <div class="row" id="card-container"></div>
+    <nav aria-label="Page navigation example">
+        <ul class="pagination justify-content-center" id="pagination"></ul>
+    </nav>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+<script type="text/javascript" src="https://code.jquery.com/jquery-3.5.1.js"></script>
+<script>
+    var currentPage = 0;
+    var pageSize = 5;
+    var totalPages = 0;
+
+    function fetchCityPage(pageNumber, pageSize) {
+        fetch(`/card?pageNumber=${pageNumber}&pageSize=${pageSize}`)
+            .then(response => response.json())
+            .then(data => {
+                const cardContainer = document.getElementById('card-container');
+                cardContainer.innerHTML = '';
+
+                data.content.forEach(city => {
+                    const cardCol = document.createElement('div');
+                    cardCol.classList.add('col-12');
+
+                    const card = document.createElement('div');
+                    card.classList.add('card');
+
+                    const cardBody = document.createElement('div');
+                    cardBody.classList.add('card-body');
+
+                    const cardTitle = document.createElement('h5');
+                    cardTitle.classList.add('card-title');
+                    cardTitle.textContent = city.name;
+
+                    const cardText = document.createElement('p');
+                    cardText.classList.add('card-text');
+                    cardText.textContent = city.description;
+
+                    cardBody.appendChild(cardTitle);
+                    cardBody.appendChild(cardText);
+                    card.appendChild(cardBody);
+                    cardCol.appendChild(card);
+                    cardContainer.appendChild(cardCol);
+                });
+
+                totalPages = data.totalPages;
+                generatePaginationButtons();
+            })
+            .catch(error => {
+                console.error('Error:', error);
+            });
+    }
+
+    function generatePaginationButtons() {
+        var paginationDiv = document.getElementById('pagination');
+        paginationDiv.innerHTML = '';
+
+        var startPage = Math.max(0, currentPage - 1);
+        var endPage = Math.min(startPage + 2, totalPages - 1);
+
+        // Adjust startPage and endPage when reaching the last page
+        if (endPage - startPage < 2 && totalPages > 2) {
+            startPage = Math.max(0, endPage - 2);
+        }
+
+        if (currentPage > 0) {
+            var prevButton = document.createElement('li');
+            prevButton.classList.add('page-item');
+            prevButton.innerHTML = `<a class="page-link" href="#" aria-label="Previous">
+                                        <span aria-hidden="true">&laquo;</span>
+                                    </a>`;
+            prevButton.addEventListener('click', function() {
+                currentPage--;
+                fetchCityPage(currentPage, pageSize);
+            });
+
+            paginationDiv.appendChild(prevButton);
+        }
+
+        for (var i = startPage; i <= endPage; i++) {
+            var button = document.createElement('li');
+            button.classList.add('page-item');
+
+            if (i === currentPage) {
+                button.classList.add('active');
+            }
+
+            button.innerHTML = `<a class="page-link" href="#">${i + 1}</a>`;
+
+            button.addEventListener('click', function() {
+                currentPage = parseInt(this.firstChild.innerHTML) - 1;
+                fetchCityPage(currentPage, pageSize);
+            });
+
+            paginationDiv.appendChild(button);
+        }
+
+        if (currentPage < totalPages - 1) {
+            var nextButton = document.createElement('li');
+            nextButton.classList.add('page-item');
+            nextButton.innerHTML = `<a class="page-link" href="#" aria-label="Next">
+                                        <span aria-hidden="true">&raquo;</span>
+                                    </a>`;
+            nextButton.addEventListener('click', function() {
+                currentPage++;
+                fetchCityPage(currentPage, pageSize);
+            });
+
+            paginationDiv.appendChild(nextButton);
+        }
+    }
+
+    fetchCityPage(currentPage, pageSize);
+</script>
+</body>
+</html>
