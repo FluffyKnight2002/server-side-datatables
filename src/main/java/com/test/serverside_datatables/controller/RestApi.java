@@ -18,7 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @AllArgsConstructor
-public class Rest {
+public class RestApi {
 
     private final CityRepo cityRepo;
     @GetMapping("/user")
