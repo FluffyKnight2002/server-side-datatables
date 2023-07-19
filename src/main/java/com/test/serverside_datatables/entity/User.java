@@ -9,30 +9,22 @@ import lombok.NoArgsConstructor;
 
 import java.io.Serializable;
 
-
 @Entity
-@Builder
 @Data
+@Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "city")
-public class City implements Serializable {
+public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-
     private long id;
 
 
+    @Column(length = 30, nullable = false, unique = true)
     private String name;
 
-
-    private String countrycode;
-
-
-    private String district;
-
-
-    private int population;
+    @Column(length = 30, nullable = false, unique = true)
+    private String email;
 
 
 

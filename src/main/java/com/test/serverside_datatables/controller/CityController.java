@@ -22,5 +22,9 @@ public class CityController {
         return "Card";
     }
 
+    @GetMapping("/userList")
+    public String userList() {
+        return "UserList";
+    }
 
 }

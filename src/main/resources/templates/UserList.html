@@ -12,9 +12,7 @@
     <thead>
     <tr>
         <th>Name</th>
-        <th>CountryCode</th>
-        <th>District</th>
-        <th>Population</th>
+        <th>Email</th>
         <th>Detail</th> <!-- Added column for the "Detail" button -->
     </tr>
     </thead>
@@ -31,15 +29,12 @@
         $('table#example').DataTable({
             "serverSide": true,
             "processing": true,
-            "ajax": '/city',
+            "ajax": '/user',
             "columns": [
                 { name: "Name", data: "name", targets: 0 },
-                { name: "CountryCode", data: "countrycode", targets: 1 },
-                { name: "District", data: "district", targets: 2 },
-                { name: "Population", data: "population", targets: 3 },
-
+                { name: "Email", data: "email", targets: 1 },
                 {
-                    targets: 4,
+                    targets: 2,
                     data: "id",
                     render: function (data, type, row) {
                         return '<a href="/customers/edit?id=' + row.id + '"><button class="btn btn-success">Detail</button></a>' ;
